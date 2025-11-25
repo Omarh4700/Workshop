@@ -227,7 +227,7 @@ vagrant status
 
 All five VMs should show "running (virtualbox)" status:
 
-<img width="507" height="208" alt="vagrant status" src="https://github.com/user-attachments/assets/c5521cf7-9fa4-4999-b106-e2412d11e8b5" />
+<img width="507" height="208" alt="vagrant status" src="https://github.com/user-attachments/assets/e02800b0-52c3-4bac-ab51-0469737f8e1d" />
 
 #### 2. Access the Application
 
@@ -248,8 +248,7 @@ Use the following credentials to login:
 - **Username**: `admin_vp`
 - **Password**: `admin_vp`
 
-<img width="1553" height="862" alt="Welcome page " src="https://github.com/user-attachments/assets/33f16403-bf98-4c7b-b3f2-65cdadcaeaf9" />
-
+<img width="1553" height="862" alt="Welcome page " src="https://github.com/user-attachments/assets/b7de3769-89f5-452d-a845-567ce861ce05" />
 
 #### 4. Test Database Connection - View All Users
 
@@ -259,7 +258,8 @@ After logging in, test the database connectivity:
 2. You should see a list of users from the MariaDB database
 3. This confirms the connection between Tomcat (app01) and MariaDB (db01) is working
 
-<img width="1548" height="858" alt="User list " src="https://github.com/user-attachments/assets/b21e1002-8754-420b-ac8a-52acbc73f64b" />
+<img width="1548" height="858" alt="User list " src="https://github.com/user-attachments/assets/534741be-6fd1-455d-abf8-b847932c16ba" />
+
 
 Sample users you should see:
 - Hibo Prince (ID: 4)
@@ -279,7 +279,7 @@ To verify the message queue is working:
    - Generated 2 Connections
    - 6 Channels, 1 Exchange, and 2 Queues
 
-<img width="1553" height="861" alt="RabbitMQ" src="https://github.com/user-attachments/assets/cd8dc622-5b6f-4210-932e-221496a6ce9f" />
+<img width="1553" height="861" alt="RabbitMQ" src="https://github.com/user-attachments/assets/abc077ee-ddc1-41f1-b026-179dce74ed57" />
 
 This confirms the connection between Tomcat (app01) and RabbitMQ (rmq01) is functioning properly.
 
