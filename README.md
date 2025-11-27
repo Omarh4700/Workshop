@@ -81,7 +81,7 @@ Internet → Nginx (Reverse Proxy/Load Balancer) → Tomcat (Java Application) �
 1. **Clone the repository** (if not already done):
    ```bash
    git clone -b docker-app https://github.com/Omarh4700/Workshop.git
-   cd docker-app/
+   cd Workshop/
    ```
 
 2. **Build and start all services**:
