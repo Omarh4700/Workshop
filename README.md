@@ -21,12 +21,22 @@ A complete multi-tier web application stack running on Docker, featuring Nginx a
 
 This application follows a multi-tier architecture pattern:
 
+![Docker Multi-Tier Architecture](screenshots/docker_full_architecture.png)
+
+*Complete architecture diagram showing the request flow from users through NGINX reverse proxy to the Tomcat application server and backend services (MySQL, Memcached, RabbitMQ), all running as Docker containers connected via the vp-app-network bridge network.*
+
+**Flow Overview:**
+
 ```
-Internet → Nginx (Reverse Proxy/Load Balancer) → Tomcat (Java Application) → MySQL (Database)
-                                                                            ↓
-                                                                      Memcached (Cache)
-                                                                            ↓
-                                                                      RabbitMQ (Message Queue)
+Users/Clients (HTTP/HTTPS)
+        ↓
+Nginx (Reverse Proxy/Load Balancer) - Ports 80, 443
+        ↓
+Tomcat (Java Application) - Port 8080
+        ↓
+├── MySQL (Database) - Port 3306
+├── Memcached (Cache) - Port 11211
+└── RabbitMQ (Message Queue) - Port 5672
 ```
 
 ## Services
