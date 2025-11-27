@@ -1,0 +1,8 @@
+#!/bin/bash
+sudo apt update -y && sudo apt -y install mysql-client
+git clone https://github.com/Omarh4700/Workshop.git /tmp/Workshop
+mysql -h ${rds_address} -u ${db_username} -p${db_password} ${db_name} < /tmp/Workshop/Vagrant-Manual-Automation/sourcecodeseniorwr/src/main/resources/db_backup.sql
+
+# Shutdown the instance after completing the database initialization
+echo "Database initialization complete. Shutting down instance..."
+sudo shutdown -h now
