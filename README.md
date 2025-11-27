@@ -2,7 +2,7 @@
 
 A complete multi-tier web application stack running on Docker, featuring Nginx as a reverse proxy, Tomcat for the Java application, MySQL database, Memcached for caching, and RabbitMQ for message queuing.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Architecture](#architecture)
 - [Services](#services)
@@ -17,7 +17,7 @@ A complete multi-tier web application stack running on Docker, featuring Nginx a
 - [Verification](#verification)
 - [Troubleshooting](#troubleshooting)
 
-## 🏗️ Architecture
+## Architecture
 
 This application follows a multi-tier architecture pattern:
 
@@ -29,7 +29,7 @@ Internet → Nginx (Reverse Proxy/Load Balancer) → Tomcat (Java Application) �
                                                                       RabbitMQ (Message Queue)
 ```
 
-## 🚀 Services
+## Services
 
 ### 1. **Nginx** (`web`)
 - **Image**: Custom-built from `nginx:latest`
@@ -69,14 +69,14 @@ Internet → Nginx (Reverse Proxy/Load Balancer) → Tomcat (Java Application) �
 - **Purpose**: Message broker for asynchronous communication
 - **Features**: AMQP protocol support with default guest credentials
 
-## 📦 Prerequisites
+## Prerequisites
 
 - Docker Engine 20.10+
 - Docker Compose 1.29+ (or Docker Compose V2)
 - At least 4GB of available RAM
 - 10GB of free disk space
 
-## 🚀 Quick Start
+## Quick Start
 
 1. **Clone the repository** (if not already done):
    ```bash
@@ -104,12 +104,12 @@ Internet → Nginx (Reverse Proxy/Load Balancer) → Tomcat (Java Application) �
    docker-compose down
    ```
 
-6. **Stop and remove volumes** (⚠️ This will delete database data):
+6. **Stop and remove volumes** (This will delete database data):
    ```bash
    docker-compose down -v
    ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 docker-app/
@@ -127,7 +127,7 @@ docker-app/
 
 ```
 
-## ⚙️ Configuration
+## Configuration
 
 ### Nginx Configuration
 
@@ -153,7 +153,7 @@ MySQL is initialized with:
 - Root password: `admin123`
 - Initial data from `db/db_backup.sql`
 
-## 🔌 Port Mappings
+## Port Mappings
 
 | Service    | Container Port | Host Port | Protocol |
 |------------|---------------|-----------|----------|
@@ -164,7 +164,7 @@ MySQL is initialized with:
 | Memcached  | 11211         | 11211     | TCP      |
 | RabbitMQ   | 5672          | 5672      | AMQP     |
 
-## 🔐 Environment Variables
+## Environment Variables
 
 ### MySQL (`db01`)
 ```yaml
@@ -179,13 +179,13 @@ RABBITMQ_DEFAULT_USER: guest
 RABBITMQ_DEFAULT_PASS: guest
 ```
 
-## 💾 Volumes
+## Volumes
 
 - **db_data**: Persistent storage for MySQL database files
   - Mount point: `/var/lib/mysql`
   - Ensures data persistence across container restarts
 
-## 🌐 Networking
+## Networking
 
 All services are connected via a custom bridge network: `vp-app-network`
 
@@ -202,7 +202,7 @@ nginx → app01 → db01
               → rmq01
 ```
 
-## ✅ Verification
+## Verification
 
 After deploying the application, you can verify that all services are working correctly by checking the following:
 
@@ -278,7 +278,7 @@ curl -I http://localhost
 - MySQL should list the `accounts` database
 - Nginx should return HTTP 200 or 302 response
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ### Check container logs
 ```bash
@@ -309,14 +309,14 @@ docker exec -it db01 bash       # MySQL
 2. **Database connection errors**: Wait for MySQL to fully initialize (can take 30-60 seconds on first run)
 3. **SSL certificate errors**: The self-signed certificate will show warnings in browsers - this is expected for development
 
-## 📝 Notes
+## Notes
 
 - The application source code is cloned from GitHub during the build process
 - SSL certificates are self-signed and generated during the Nginx container build
 - The MySQL database is initialized with data from `db_backup.sql` on first run
 - All services use a custom bridge network for secure communication
 
-## 🛠️ Development
+## Development
 
 To make changes:
 
@@ -332,4 +332,4 @@ To make changes:
 
 ---
 
-**Built with Docker** 🐳
+**Built with Docker** 
