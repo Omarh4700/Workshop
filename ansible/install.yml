@@ -1,0 +1,4 @@
+- import_playbook: prepare-nodes.yml
+- import_playbook: change-hostnames.yml
+- import_playbook: master.yml
+- import_playbook: workers.yml
