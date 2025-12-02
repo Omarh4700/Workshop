@@ -3,10 +3,8 @@ pipeline {
 
     environment {
         REGION             = "us-east-1"
-
-        // Public ECR repo
         ECR_DB             = "public.ecr.aws/b0w0w8l4/vp-app-db"
-
+        ECR_TOMCAT         = "public.ecr.aws/b0w0w8l4/vp-app-tomcat"
         BRANCH             = "beta"
     }
 
@@ -53,11 +51,11 @@ pipeline {
                                 
                                 # Verify decryption succeeded
                                 if [ ! -f db_backup.sql ]; then
-                                    echo "❌ Decryption failed!"
+                                    echo "Decryption failed!"
                                     exit 1
                                 fi
                                 
-                                echo "✅ Database backup decrypted successfully"
+                                echo "Database backup decrypted successfully"
                             '''
                         }
                     }
@@ -78,6 +76,46 @@ pipeline {
                 }
             }
         }
+
+        stage('Decrypt Tomcat App Config') {
+            steps {
+                script {
+                    dir('K8s/Dockerfile/tomcat') {
+                        withCredentials([
+                            string(credentialsId: 'app-encryption-key', variable: 'ENCRYPTION_KEY')
+                        ]) {
+                            sh '''
+                                openssl enc -aes-256-cbc -d -pbkdf2 \
+                                    -in application.properties.enc \
+                                    -out application.properties \
+                                    -k "${ENCRYPTION_KEY}"
+                                
+                                if [ ! -f application.properties ]; then
+                                    echo "Decryption failed!"
+                                    exit 1
+                                fi
+                                
+                                echo "App config decrypted successfully"
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build & Push Tomcat Image') {
+            steps {
+                script {
+                    dir('K8s/Dockerfile/tomcat') {
+                        sh """
+                        docker build -t ${ECR_TOMCAT}:${GIT_SHA} -t ${ECR_TOMCAT}:latest .
+                        docker push ${ECR_TOMCAT}:${GIT_SHA}
+                        docker push ${ECR_TOMCAT}:latest
+                        """
+                    }
+                }
+            }
+        }
     }
 
     post {
@@ -87,6 +125,10 @@ pipeline {
                     // Clean up decrypted SQL file for security
                     sh 'rm -f db_backup.sql'
                 }
+                dir('K8s/Dockerfile/tomcat') {
+                    // Clean up decrypted properties file for security
+                    sh 'rm -f application.properties'
+                }
             }
             // Logout from ECR
             sh "docker logout public.ecr.aws/b0w0w8l4 || true"
@@ -95,12 +137,16 @@ pipeline {
             sh """
                 docker rmi ${ECR_DB}:${GIT_SHA} || true
                 docker rmi ${ECR_DB}:latest || true
+                docker rmi ${ECR_TOMCAT}:${GIT_SHA} || true
+                docker rmi ${ECR_TOMCAT}:latest || true
             """
         }
         success {
-            echo " DB image built and pushed successfully!"
+            echo " Images built and pushed successfully!"
             echo "   - DB: ${ECR_DB}:${GIT_SHA}"
             echo "   - DB: ${ECR_DB}:latest"
+            echo "   - Tomcat: ${ECR_TOMCAT}:${GIT_SHA}"
+            echo "   - Tomcat: ${ECR_TOMCAT}:latest"
         }
         failure {
             echo " Build or push failed!"
