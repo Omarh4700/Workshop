@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  serviceName: db01
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      initContainers:
+        - name: permission-fixer
+          image: ubuntu
+          command:
+            - sh
+            - -c
+            - |
+              if [ -d k8s-data ]; then
+                rm -rf k8s-data
+              fi
+              mkdir k8s-data
+              chown -R 1000:1000 k8s-data
+      containers:
+      - name: mysql
+        image: public.ecr.aws/b0w0w8l4/vp-app-db
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: admin123
+        
+        ports:
+          - containerPort: 3306
+            name: mysql
+        
+        volumeMounts:
+          - name: mysql-pvc
+            mountPath: /var/lib/mysql
+        
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+        
+        
+      volumes:
+        - name: mysql-pvc
+          persistentVolumeClaim:
+            claimName: mysql-pvc
+

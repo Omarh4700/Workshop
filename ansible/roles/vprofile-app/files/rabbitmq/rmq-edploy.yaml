@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+  labels:
+    app: rabbitmq
+  namespace: vprofile
+spec:
+  replicas: 1
+  selector:
+    strategy:
+      type: RollingUpdate
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:latest
+          ports:
+            - containerPort: 5672
+          envFrom:
+            - secretRef:
+                name: rmq-secret
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "128Mi"
+        limits:
+          cpu: "250m"
+          memory: "256Mi"

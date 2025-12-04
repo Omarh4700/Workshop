@@ -120,6 +120,26 @@ resource "aws_security_group_rule" "master_controller_from_workers" {
   security_group_id        = aws_security_group.master.id
 }
 
+resource "aws_security_group_rule" "grafana_nodeport_tcp_from_master" {
+  type                     = "ingress"
+  from_port                = 30000
+  to_port                  = 32767
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.master.id
+  description              = "NodePort Services TCP from master"
+  security_group_id        = aws_security_group.master.id
+}
+
+resource "aws_security_group_rule" "grafana_nodeport_tcp_from_clb" {
+  type                     = "ingress"
+  from_port                = 30000
+  to_port                  = 32767
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.clb.id
+  description              = "NodePort Services TCP from CLB"
+  security_group_id        = aws_security_group.master.id
+}
+
 resource "aws_security_group_rule" "master_icmp" {
   type              = "ingress"
   from_port         = -1
@@ -219,4 +239,107 @@ resource "aws_security_group_rule" "workers_icmp" {
   cidr_blocks       = ["0.0.0.0/0"]
   description       = "Open ICMP protocole from every where"
   security_group_id = aws_security_group.workers.id
+}
+
+resource "aws_security_group_rule" "workers_nodeport_tcp_from_clb" {
+  type                     = "ingress"
+  from_port                = 30000
+  to_port                  = 32767
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.clb.id
+  description              = "NodePort Services TCP from CLB"
+  security_group_id        = aws_security_group.workers.id
+}
+
+
+#========================================
+# create security group for Jenkins
+#========================================
+resource "aws_security_group" "jenkins" {
+  name        = "jenkins-sg"
+  description = "Security group for Jenkins server"
+  vpc_id      = var.vpc_id
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic"
+  }
+
+  tags = {
+    Name = "jenkins-sg"
+  }
+}
+
+resource "aws_security_group_rule" "jenkins_ssh_from_bastion" {
+  type                     = "ingress"
+  from_port                = 22
+  to_port                  = 22
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.bastion-sg.id
+  description              = "SSH access from bastion host"
+  security_group_id        = aws_security_group.jenkins.id
+}
+
+resource "aws_security_group_rule" "jenkins_web_ui" {
+  type              = "ingress"
+  from_port         = 8080
+  to_port           = 8080
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  description       = "Jenkins web UI access"
+  security_group_id = aws_security_group.jenkins.id
+}
+
+resource "aws_security_group_rule" "jenkins_icmp" {
+  type              = "ingress"
+  from_port         = -1
+  to_port           = -1
+  protocol          = "icmp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  description       = "ICMP from anywhere"
+  security_group_id = aws_security_group.jenkins.id
+}
+
+#========================================
+# create security group for CLB
+#========================================
+resource "aws_security_group" "clb" {
+  name        = "clb-sg"
+  description = "Security group for CLB"
+  vpc_id      = var.vpc_id
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic"
+  }
+
+  tags = {
+    Name = "clb-sg"
+  }
+}
+
+resource "aws_security_group_rule" "CLB_http_ingress" {
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  description       = "Allow HTTP inbound traffic"
+  security_group_id = aws_security_group.clb.id
+}
+
+resource "aws_security_group_rule" "CLB_https_ingress" {
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  description       = "Allow HTTPS inbound traffic"
+  security_group_id = aws_security_group.clb.id
 }

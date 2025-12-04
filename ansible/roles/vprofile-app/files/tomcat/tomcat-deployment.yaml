@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tomcat
+  namespace: vprofile
+  labels:
+    app: tomcat
+spec:
+  replicas: 3
+  selector:
+    strategy:
+      type: RollingUpdate
+    matchLabels:
+      app: tomcat
+  template:
+    metadata:
+      labels:
+        app: tomcat
+    spec:
+      containers:
+        - name: tomcat-container
+          image: public.ecr.aws/b0w0w8l4/vp-app-tomcat
+          ports:
+            - containerPort: 80
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"

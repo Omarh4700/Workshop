@@ -1,0 +1,45 @@
+---
+- name: Apply mysql manifests
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition: "{{ lookup('file', 'mysql/' + item) }}"
+  loop:
+    - vprofile-ns.yaml
+    - db-secrets.yaml
+    - db-pv.yaml
+    - db-pvc.yaml
+    - db-statefulset.yaml
+    - db-service.yaml
+  when: inventory_hostname in groups['masters'] 
+
+- name: Apply rabbitmq manifests
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition: "{{ lookup('file', 'rabbitmq/' + item) }}"
+  loop:
+    - rmq-edploy.yaml
+    - rmq-secret.yaml
+    - rmq-service.yaml
+  when: inventory_hostname in groups['masters'] 
+
+- name: Apply memcached manifests
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition: "{{ lookup('file', 'memcahed/' + item) }}"
+  loop:
+    - mc-deployment.yml
+    - mc-service.yml
+  when: inventory_hostname in groups['masters'] 
+
+- name: Apply tomcat manifests
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition: "{{ lookup('file', 'tomcat/' + item) }}"
+  loop:
+    - tomcat-deployment.yaml
+    - tomcat-service.yaml
+  when: inventory_hostname in groups['masters'] 

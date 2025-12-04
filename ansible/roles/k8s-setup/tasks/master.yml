@@ -1,0 +1,75 @@
+---
+- name: check if cluster is already initialized
+  stat:
+    path: /etc/kubernetes/admin.conf
+  register: k8s_initialized
+
+- name: reset kubeadm if previous initialization failed
+  shell: kubeadm reset -f
+  when: k8s_initialized.stat.exists == false
+
+- name: remove old cluster initialization marker
+  file:
+    path: "{{ ansible_env.HOME }}/cluster_initialized.txt"
+    state: absent
+  when: k8s_initialized.stat.exists == false
+
+- name: initialize the cluster
+  shell: kubeadm init --pod-network-cidr=10.244.0.0/16 >> cluster_initialized.txt
+  args:
+    chdir: $HOME
+    creates: cluster_initialized.txt
+
+- name: create .kube directory
+  become: true
+  become_user: ubuntu
+  file:
+    path: $HOME/.kube
+    state: directory
+    mode: 0755
+
+- name: copy admin.conf to user's kube config
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/ubuntu/.kube/config
+    remote_src: true
+    owner: ubuntu
+
+- name: Create directory for calico manifest
+  file:
+    path: /tmp/from-ansible-CD
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: 0755
+
+- name: download calico manifest
+  become: true
+  become_user: ubuntu
+  get_url:
+    url: https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
+    dest: /tmp/from-ansible-CD/calico.yaml
+
+- name: update calico pod cidr
+  become: true
+  become_user: ubuntu
+  replace:
+    path: /tmp/from-ansible-CD/calico.yaml
+    regexp: "192.168.0.0/16"
+    replace: "10.244.0.0/16"
+
+- name: install Pod network (Calico)
+  become: true
+  become_user: ubuntu
+  shell: kubectl apply -f /tmp/from-ansible-CD/calico.yaml >> pod_network_setup.txt
+  args:
+    chdir: $HOME
+    creates: pod_network_setup.txt
+
+- name: get join command
+  shell: kubeadm token create --print-join-command
+  register: join_command_raw
+
+- name: set join command
+  set_fact:
+    join_command: "{{ join_command_raw.stdout_lines[0] }}"

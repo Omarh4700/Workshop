@@ -1,0 +1,12 @@
+---
+- include_tasks: prerequisites.yml
+
+- meta: flush_handlers
+
+- include_tasks: hostnames.yml
+
+- include_tasks: master.yml
+  when: inventory_hostname in groups['masters'] 
+
+- include_tasks: workers.yml
+  when: inventory_hostname in groups['workers']

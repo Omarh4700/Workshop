@@ -1,0 +1,6 @@
+---
+# handlers file for helm
+- name: Remove Helm script
+  file:
+    path: /tmp/get_helm.sh
+    state: absent

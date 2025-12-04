@@ -1,0 +1,15 @@
+[masters]
+master ansible_host=192.168.20.122 new_hostname=master
+
+[workers]
+worker1 ansible_host=192.168.20.31 new_hostname=worker1
+worker2 ansible_host=192.168.20.55 new_hostname=worker2
+
+[k8s:children]
+masters
+workers
+
+[k8s:vars]
+ansible_user=ubuntu
+ansible_ssh_private_key_file=../terraform/bastion-key.pem
+ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q ubuntu@3.219.41.214 -i ../terraform/bastion-key.pem -o StrictHostKeyChecking=no"'
