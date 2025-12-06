@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tomcat-ingress
+  namespace: vprofile
+  annotations:
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "INGRESSCOOKIE"
+    nginx.ingress.kubernetes.io/session-cookie-path: "/"
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: tomcat-service
+                port:
+                  number: 8080

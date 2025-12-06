@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         REGION             = "us-east-1"
-        ECR_DB             = "public.ecr.aws/b0w0w8l4/vp-app-db"
-        ECR_TOMCAT         = "public.ecr.aws/b0w0w8l4/vp-app-tomcat"
+        ECR_DB             = "public.ecr.aws/r7l3n7g0/vp-app-db"
+        ECR_TOMCAT         = "public.ecr.aws/r7l3n7g0/vp-app-tomcat"
         BRANCH             = "beta"
     }
 
@@ -29,7 +29,7 @@ pipeline {
             steps {
                 sh """
                 aws ecr-public get-login-password --region ${REGION} \
-                | docker login --username AWS --password-stdin public.ecr.aws/b0w0w8l4
+                | docker login --username AWS --password-stdin public.ecr.aws/r7l3n7g0
                 """
             }
         }
@@ -37,7 +37,7 @@ pipeline {
         stage('Decrypt DB Backup') {
             steps {
                 script {
-                    dir('K8s/Dockerfile/db') {
+                    dir('application-data/db') {
                         // Get encryption key from Jenkins Credentials
                         withCredentials([
                             string(credentialsId: 'db-encryption-key', variable: 'ENCRYPTION_KEY')
@@ -66,7 +66,7 @@ pipeline {
         stage('Build & Push DB Image') {
             steps {
                 script {
-                    dir('K8s/Dockerfile/db') {
+                    dir('application-data/db') {
                         sh """
                         docker build -t ${ECR_DB}:${GIT_SHA} -t ${ECR_DB}:latest .
                         docker push ${ECR_DB}:${GIT_SHA}
@@ -80,7 +80,7 @@ pipeline {
         stage('Decrypt Tomcat App Config') {
             steps {
                 script {
-                    dir('K8s/Dockerfile/tomcat') {
+                    dir('application-data/tomcat') {
                         withCredentials([
                             string(credentialsId: 'app-encryption-key', variable: 'ENCRYPTION_KEY')
                         ]) {
@@ -106,7 +106,7 @@ pipeline {
         stage('Build & Push Tomcat Image') {
             steps {
                 script {
-                    dir('K8s/Dockerfile/tomcat') {
+                    dir('application-data/tomcat') {
                         sh """
                         docker build -t ${ECR_TOMCAT}:${GIT_SHA} -t ${ECR_TOMCAT}:latest .
                         docker push ${ECR_TOMCAT}:${GIT_SHA}
@@ -121,17 +121,17 @@ pipeline {
     post {
         always {
             script {
-                dir('K8s/Dockerfile/db') {
+                dir('application-data/db') {
                     // Clean up decrypted SQL file for security
                     sh 'rm -f db_backup.sql'
                 }
-                dir('K8s/Dockerfile/tomcat') {
+                dir('application-data/tomcat') {
                     // Clean up decrypted properties file for security
                     sh 'rm -f application.properties'
                 }
             }
             // Logout from ECR
-            sh "docker logout public.ecr.aws/b0w0w8l4 || true"
+            sh "docker logout public.ecr.aws/r7l3n7g0 || true"
             
             // Clean up local images to save disk space
             sh """

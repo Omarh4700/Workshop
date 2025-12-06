@@ -5,12 +5,12 @@
     state: present
     definition: "{{ lookup('file', 'mysql/' + item) }}"
   loop:
-    - vprofile-ns.yaml
-    - db-secrets.yaml
-    - db-pv.yaml
-    - db-pvc.yaml
-    - db-statefulset.yaml
-    - db-service.yaml
+    - vprofile-ns.yml
+    - db-secrets.yml
+    - db-pv.yml
+    - db-pvc.yml
+    - db-statefulset.yml
+    - db-service.yml
   when: inventory_hostname in groups['masters'] 
 
 - name: Apply rabbitmq manifests
@@ -19,9 +19,9 @@
     state: present
     definition: "{{ lookup('file', 'rabbitmq/' + item) }}"
   loop:
-    - rmq-edploy.yaml
-    - rmq-secret.yaml
-    - rmq-service.yaml
+    - rmq-edploy.yml
+    - rmq-secret.yml
+    - rmq-service.yml
   when: inventory_hostname in groups['masters'] 
 
 - name: Apply memcached manifests
@@ -40,6 +40,7 @@
     state: present
     definition: "{{ lookup('file', 'tomcat/' + item) }}"
   loop:
-    - tomcat-deployment.yaml
-    - tomcat-service.yaml
+    - tomcat-deployment.yml
+    - tomcat-service.yml
+    - tomcat-ingress.yml
   when: inventory_hostname in groups['masters'] 

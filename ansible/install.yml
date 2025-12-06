@@ -1,5 +1,5 @@
 ---
-- name: Install Kubernetes Cluster
+- name: Install k8s cluster and vprofile-app manifests on all nodes
   hosts: all
   become: yes
   roles:

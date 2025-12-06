@@ -48,7 +48,7 @@ resource "aws_elb" "tomcat_clb" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 3
-    target              = "HTTP:32080/"
+    target              = "HTTP:32080/login"
     interval            = 30
   }
 

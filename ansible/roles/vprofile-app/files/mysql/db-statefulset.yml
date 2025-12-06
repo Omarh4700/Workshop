@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: vprofile
+spec:
+  serviceName: db01
+  replicas: 1
+  selector:
+    strategy:
+      type: RollingUpdate
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      initContainers:
+        - name: create-k8s-data
+          image: busybox
+          command:
+            [
+              "sh",
+              "-c",
+              "mkdir -p /home/ubuntu/k8s-data && chown -R 1000:1000 /home/ubuntu/k8s-data",
+            ]
+          volumeMounts:
+            - name: mysql-pvc
+              mountPath: /home/ubuntu/k8s-data
+        - name: permission-fixer
+          image: busybox
+          command: ["sh", "-c", "chown -R 1000:1000 /var/lib/mysql"]
+          volumeMounts:
+            - name: mysql-pvc
+              mountPath: /var/lib/mysql
+      containers:
+        - name: mysql
+          image: public.ecr.aws/r7l3n7g0/vp-app-db
+          envFrom:
+            - secretRef:
+                name: db-secret
+          ports:
+            - containerPort: 3306
+              name: mysql
+
+          volumeMounts:
+            - name: mysql-pvc
+              mountPath: /var/lib/mysql
+
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+
+      volumes:
+        - name: mysql-pvc
+          persistentVolumeClaim:
+            claimName: mysql-pvc

@@ -150,6 +150,16 @@ resource "aws_security_group_rule" "master_icmp" {
   security_group_id = aws_security_group.master.id
 }
 
+resource "aws_security_group_rule" "master_allow_all_from_workers" {
+  type                     = "ingress"
+  from_port                = 0
+  to_port                  = 0
+  protocol                 = "-1"
+  source_security_group_id = aws_security_group.workers.id
+  description              = "Allow all inbound traffic from workers"
+  security_group_id        = aws_security_group.master.id
+}
+
 #========================================
 # create security group for worker nodes
 #========================================
@@ -239,6 +249,16 @@ resource "aws_security_group_rule" "workers_icmp" {
   cidr_blocks       = ["0.0.0.0/0"]
   description       = "Open ICMP protocole from every where"
   security_group_id = aws_security_group.workers.id
+}
+
+resource "aws_security_group_rule" "workers_allow_all_from_master" {
+  type                     = "ingress"
+  from_port                = 0
+  to_port                  = 0
+  protocol                 = "-1"
+  source_security_group_id = aws_security_group.master.id
+  description              = "Allow all inbound traffic from master"
+  security_group_id        = aws_security_group.workers.id
 }
 
 resource "aws_security_group_rule" "workers_nodeport_tcp_from_clb" {
