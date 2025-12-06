@@ -5,7 +5,7 @@ pipeline {
         REGION             = "us-east-1"
         ECR_DB             = "public.ecr.aws/r7l3n7g0/vp-app-db"
         ECR_TOMCAT         = "public.ecr.aws/r7l3n7g0/vp-app-tomcat"
-        BRANCH             = "beta"
+        BRANCH             = "vProfile-Microservices"
     }
 
     stages {
