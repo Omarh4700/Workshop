@@ -33,7 +33,7 @@ The vProfile application is a Java-based web application deployed as microservic
 
 ## Architecture
 
-![vProfile Architecture](architecture-diagram.png)
+![vProfile Architecture](./screenshots/architecture-diagram.png)
 
 ### Architecture Overview
 
@@ -103,7 +103,7 @@ vProfile-Microservices/
 │       ├── 07-Route-53/         # Private hosted zone and DNS records
 │       ├── 08-ECR/              # Elastic Container Registry
 │       ├── 09-iam/              # IAM roles and instance profiles
-│       └── 10-CLB/              # Classic Load Balancer for Grafana
+│       └── 10-CLB/              # Classic Load Balancers (Grafana & Tomcat)
 │
 ├── ansible/                     # Configuration Management
 │   ├── ansible.cfg              # Ansible configuration
@@ -111,39 +111,29 @@ vProfile-Microservices/
 │   ├── inventory/               # Dynamic inventory from Terraform
 │   └── roles/
 │       ├── k8s-setup/           # Kubernetes cluster installation
-│       ├── helm/                # Helm installation
-│       ├── grafana/             # Grafana deployment
+│       ├── helm/                # Helm installation & Nginx Ingress
+│       ├── grafana/             # Grafana & Prometheus deployment
 │       └── vprofile-app/        # Application deployment
+│           └── files/           # Kubernetes manifests
+│               ├── mysql/       # MySQL manifests (.yml)
+│               ├── rabbitmq/    # RabbitMQ manifests (.yml)
+│               ├── memcached/   # Memcached manifests (.yml)
+│               └── tomcat/      # Tomcat manifests (.yml)
 │
-├── kubernetes/                  # Kubernetes Manifests
-│   ├── playbook.yaml            # Ansible playbook for K8s deployment
-│   ├── mysql/
-│   │   ├── db-pv.yaml           # PersistentVolume
-│   │   ├── db-pvc.yaml          # PersistentVolumeClaim
-│   │   ├── db-statefulset.yaml  # MySQL StatefulSet
-│   │   └── db-service.yaml      # MySQL Service
-│   ├── rabbitmq/
-│   │   ├── rmq-edploy.yaml      # RabbitMQ Deployment
-│   │   └── rmq-service.yaml     # RabbitMQ Service
-│   └── tomcat/
-│       ├── tomcat-deployment.yaml  # Tomcat Deployment (3 replicas)
-│       ├── tomcat-service.yaml     # Tomcat Service
-│       └── tomcat-ingress.yaml     # Ingress configuration
+├── application-data/            # Application Dockerfiles & Data
+│   ├── db/                      # MySQL Docker Image
+│   │   ├── Dockerfile           # MySQL image with encrypted backup
+│   │   ├── db_backup.sql.enc    # Encrypted database backup
+│   │   └── encrypt_db.sh        # Encryption script
+│   └── tomcat/                  # Tomcat Docker Image
+│       ├── Dockerfile           # Multi-stage build (Maven + Tomcat)
+│       ├── application.properties.enc  # Encrypted app configuration
+│       └── encrypt_tompapp.sh   # Encryption script
 │
-├── db/                          # MySQL Docker Image
-│   ├── Dockerfile               # Multi-stage build for MySQL
-│   ├── db_backup.sql            # Database initialization script
-│   ├── db_backup.sql.enc        # Encrypted backup
-│   └── encrypt_db.sh            # Encryption script
-│
-├── tomcat/                      # Tomcat Docker Image
-│   ├── Dockerfile               # Multi-stage build (Maven + Tomcat)
-│   ├── application.properties   # Application configuration
-│   ├── application.properties.enc  # Encrypted configuration
-│   └── encrypt_tompapp.sh       # Encryption script
-│
+├── screenshots/                 # Project screenshots
 ├── Jenkinsfile                  # CI/CD Pipeline definition
 ├── deploy.sh                    # Automated deployment script
+├── .gitignore                   # Git ignore rules (excludes sensitive files)
 └── README.md                    # This file
 ```
 
