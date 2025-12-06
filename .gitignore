@@ -1,0 +1,52 @@
+# Environment files (contains secrets)
+.env
+*.env
+!.env.example
+
+# Encryption keys - NEVER commit these!
+.db_encryption_key
+.app_encryption_key
+*_encryption_key
+
+# Database files - only encrypted version should be committed
+db_backup.sql
+application.properties
+!db_backup.sql.enc
+!application.properties.enc
+
+# Docker
+.dockerignore
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Terraform
+*.tfstate
+*.tfstate.*
+*.tfvars
+.terraform/
+crash.log
+*.tfplan
+bastion-key.pem
+
+# Ansible
+*.retry
+ansible/inventory/hosts
+
+# SSH Keys
+*.pem
+*.key
+id_rsa*
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+*~
