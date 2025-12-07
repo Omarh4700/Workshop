@@ -882,9 +882,17 @@ kubectl exec -n vprofile mysql-0 -- mysqldump -u root -p<password> <database> > 
 
 This project is licensed under the MIT License.
 
-## Authors
+## CONTRIBUTORS
 
-- **Omar** - Initial work
+| Name                 | GitHub Profile |
+|----------------------|----------------|
+| **Omar Hassan**      | [Omarh4700](https://github.com/Omarh4700) |
+| **Mohamed Abdelsattar** | [mohamedbstar413](https://github.com/mohamedbstar413) |
+| **Amr Adel**         | [amrAdel-1](https://github.com/amrAdel-1) |
+| **Amr Elhady**       | [Amrelhady288](https://github.com/Amrelhady288) |
+| **Ahmed Khaledd**    | [A7medo-O](https://github.com/A7medo-O) |
+| **Salah Sleem**     | [SalahSleem](https://github.com/SalahSleem) |
+
 
 ## Acknowledgments
 
