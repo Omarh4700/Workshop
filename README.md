@@ -35,6 +35,16 @@ Here are the projects currently available in this repository:
   - Uses `docker-compose` for easy setup and teardown.
   - Includes custom Dockerfiles and service linking.
 
+### 5. Production-Ready Microservices on Kubernetes
+- **Branch**: `vProfile-Microservices`
+- **Description**: A complete enterprise-grade microservices deployment on AWS with self-managed Kubernetes cluster.
+  - **Infrastructure**: Terraform-provisioned VPC, 5 EC2 instances, Classic Load Balancers, IAM roles, Route53.
+  - **CI/CD**: Jenkins pipeline with automated Docker builds, AWS ECR registry, Ansible-driven deployments.
+  - **Kubernetes**: Self-managed kubeadm cluster (1 master, 2 workers) with Tomcat, MySQL, RabbitMQ, Memcached.
+  - **Monitoring**: Prometheus + Grafana stack via Helm for complete observability.
+  - **Security**: Encrypted secrets, Bastion host, IAM instance profiles, least privilege security groups.
+  - Single-command deployment (`./deploy.sh`) for full infrastructure and application provisioning.
+
 ---
 
 ## How to Access
@@ -61,6 +71,10 @@ git clone -b docker-app https://github.com/Omarh4700/Workshop.git
 git clone -b aws-terraform https://github.com/Omarh4700/Workshop.git
 ```
 
+### 5. Production-Ready Microservices on Kubernetes
+```bash
+git clone -b vProfile-Microservices https://github.com/Omarh4700/Workshop.git
+```
 
 ---
 
