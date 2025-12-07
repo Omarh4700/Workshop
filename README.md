@@ -281,7 +281,7 @@ The Jenkins pipeline automates the **Continuous Integration** process by buildin
 
 #### 1. Checkout Code
 ```groovy
-git branch: "Deploying-Vprofile-app", url: "https://github.com/Omarh4700/vProfile-Microservices.git"
+git branch: "vProfile-Microservices", url: "https://github.com/Omarh4700/vProfile-Microservices.git"
 ```
 - Clones the application source code from GitHub
 
@@ -404,8 +404,8 @@ ansible-playbook install.yml
 
 ```bash
 # Clone the repository
-git clone -b vProfile-Microservices https://github.com/Omarh4700/Workshop.git vProfile-Microservices
-cd vProfile-Microservices
+git clone -b vProfile-Microservices https://github.com/Omarh4700/Workshop.git
+cd Workshop
 
 # Run automated deployment
 ./deploy.sh
@@ -574,7 +574,7 @@ http://<ingress-ip>/login
 #### Encrypt Database Backup
 
 ```bash
-cd db
+cd ./application-data/db
 
 # Create encryption key (save this securely!)
 export DB_ENCRYPTION_KEY="your-secure-key-here"
@@ -588,7 +588,7 @@ export DB_ENCRYPTION_KEY="your-secure-key-here"
 #### Encrypt Application Configuration
 
 ```bash
-cd tomcat
+cd ./application-data/tomcat
 
 # Create encryption key (save this securely!)
 export APP_ENCRYPTION_KEY="your-secure-key-here"
